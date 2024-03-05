@@ -15,9 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Northwind.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\Northwind.Common.EntityModels.Sqlite\Northwind.Common.EntityModels.Sqlite.csproj" />
   </ItemGroup>
 
 </Project>
