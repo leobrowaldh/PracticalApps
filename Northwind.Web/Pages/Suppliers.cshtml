@@ -1,0 +1,50 @@
+﻿@page
+@using Packt.Shared;
+@model Northwind.Web.Pages.SuppliersModel
+@* for use in the form: input asp-for to bind the input to the model: *@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<div class="row">
+	<h1 class="display-2">Suppliers</h1>
+	<table class="table">
+		<thead class="thead-inverse">
+			<tr>
+				<th>Company Name</th>
+				<th>Country</th>
+				<th>Phone</th>
+			</tr>
+		</thead>
+		<tbody>
+			@if (Model.Suppliers is not null)
+			{
+				@foreach (Supplier supplier  in Model.Suppliers)
+				{
+					<tr>
+						<td>@supplier.CompanyName</td>
+						<td>@supplier.Country</td>
+						<td>@supplier.Phone</td>
+					</tr>
+				}
+			}
+		</tbody>
+	</table>
+</div>
+
+<div class="row">
+	<p>Enter details for a new supplier:</p>
+	<form method="POST">
+		<div>
+			<input asp-for="Supplier.CompanyName"
+				   placeholder="Company Name" />
+		</div>
+		<div>
+			<input asp-for="Supplier.Country"
+				   placeholder="Country" />
+		</div>
+		<div>
+			<input asp-for="Supplier.Phone"
+				   placeholder="Phone" />
+		</div>
+		<input type="submit" />
+	</form>
+</div>
