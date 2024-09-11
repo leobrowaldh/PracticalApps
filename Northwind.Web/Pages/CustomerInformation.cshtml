@@ -1,0 +1,38 @@
+﻿@page
+@model Northwind.Web.Pages.CustomerInformationModel
+@using Packt.Shared;
+@{
+}
+
+<div class="card" style="width: 18rem;">
+    <div class="card-header">
+        @Model.CustomerToDisplay.CompanyName
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">Contact name: @Model.CustomerToDisplay.ContactName</li>
+        <li class="list-group-item">Address: @Model.CustomerToDisplay.Address</li>
+        <li class="list-group-item">Country: @Model.CustomerToDisplay.Country</li>
+        <li class="list-group-item">Phone: @Model.CustomerToDisplay.Phone</li>
+    </ul>
+</div>
+
+<div class="row">
+	<table class="table">
+		<thead class="thead-inverse">
+			<tr>
+				<th>Orders</th>
+			</tr>
+		</thead>
+		<tbody>
+			@if (Model.CustomerToDisplay.Orders is not null)
+			{
+				@foreach (Order order in Model.CustomerToDisplay.Orders)
+				{
+					<tr>
+						<td>Order id: @order.OrderId</td>
+					</tr>
+				}
+			}
+		</tbody>
+	</table>
+</div>
