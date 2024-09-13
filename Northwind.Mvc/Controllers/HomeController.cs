@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc; //Controller, IActionResult
 using Northwind.Mvc.Models; //ErrorViewModel
 using System.Diagnostics; //Activity
 using Packt.Shared;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Northwind.Mvc.Controllers
 {
@@ -27,6 +28,25 @@ namespace Northwind.Mvc.Controllers
 			return View(model);
 		}
 
+		public IActionResult ProductDetail(int? id) //model binding binds the id from route to parameter passed here
+		{
+			//here he doesnt use a viewmodel, aparently it is not needed, since we only need a product
+			if (!id.HasValue)
+			{
+				return BadRequest("Product Id missing");
+			}
+
+			Product? model = db.Products.SingleOrDefault(p => p.ProductId == id);
+
+			if (model is null)
+			{
+				return NotFound($"Product {id} not found.");
+			}
+
+			return View(model);
+		}
+
+		[Authorize(Roles = "Administrators")]
 		public IActionResult Privacy()
 		{
 			return View();
@@ -37,5 +57,24 @@ namespace Northwind.Mvc.Controllers
 		{
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 		}
-	}
+
+		public IActionResult ModelBinding()
+		{
+			return View(); //page with a form to submit
+        }
+
+		[HttpPost] // use this action method to process POSTs (since the methods are called the same)
+        public IActionResult ModelBinding(Thing thing)
+        {
+			HomeModelBindingViewModel model = new(
+			Thing: thing, 
+			HasErrors: !ModelState.IsValid,
+			ValidationErrors: ModelState.Values
+				.SelectMany(state => state.Errors)
+				.Select(error => error.ErrorMessage)
+			);
+
+			return View(model);
+		}
+    }
 }

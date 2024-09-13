@@ -12,7 +12,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-	.AddEntityFrameworkStores<ApplicationDbContext>();
+	.AddRoles<IdentityRole>() //enable role management
+	.AddEntityFrameworkStores<ApplicationDbContext>(); //to store identitys in this db.
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddNorthwindContext();
