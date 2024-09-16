@@ -2,10 +2,12 @@
 @{
 	ViewData["Title"] = "Product Detail - " + Model.ProductName;
 }
+<div>
 <h2>Product Detail</h2>
 <p class="alert alert-@ViewData["alertstyle"]">
     @DateTime.Now.ToLongTimeString()
 </p>
+</div>
 <hr />
 <div>
     <dl class="dl-horizontal">

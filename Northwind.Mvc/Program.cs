@@ -18,6 +18,13 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddNorthwindContext();
 
+builder.Services.AddOutputCache(options =>
+{
+    options.DefaultExpirationTimeSpan = TimeSpan.FromSeconds(20); //the default expiration is 1 minute, think carefully about this duration.
+	options.AddPolicy("views", p => p.SetVaryByQuery("alertstyle")); //named policy, alertstyle will be the only query string parameter that will make the cache vary for this url,
+																	 //so a new cache is made if this parameter change, but other parameters wont make a new cache.
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -40,9 +47,15 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseOutputCache();
+
 app.MapControllerRoute(
 	name: "default",
-	pattern: "{controller=Home}/{action=Index}/{id?}");
+	pattern: "{controller=Home}/{action=Index}/{id?}")
+	.CacheOutput("views");
 app.MapRazorPages();
+
+app.MapGet("/notcached", () => DateTime.Now.ToString());
+app.MapGet("/cached", () => DateTime.Now.ToString()).CacheOutput();
 
 app.Run();
