@@ -42,7 +42,7 @@ public class HomeController(ILogger<HomeController> logger, NorthwindContext inj
 			return BadRequest("Product Id missing");
 		}
 
-		Product? model = await db.Products.SingleOrDefaultAsync(p => p.ProductId == id); 
+		Product? model = await db.Products.SingleOrDefaultAsync(p => p.ProductId == id);
 
 		if (model is null)
 		{
@@ -68,13 +68,13 @@ public class HomeController(ILogger<HomeController> logger, NorthwindContext inj
 	public IActionResult ModelBinding()
 	{
 		return View(); //page with a form to submit
-    }
+	}
 
 	[HttpPost] // use this action method to process POSTs (since the methods are called the same)
-    public IActionResult ModelBinding(Thing thing)
-    {
+	public IActionResult ModelBinding(Thing thing)
+	{
 		HomeModelBindingViewModel model = new(
-		Thing: thing, 
+		Thing: thing,
 		HasErrors: !ModelState.IsValid,
 		ValidationErrors: ModelState.Values
 			.SelectMany(state => state.Errors)
@@ -84,21 +84,40 @@ public class HomeController(ILogger<HomeController> logger, NorthwindContext inj
 		return View(model);
 	}
 
-    public IActionResult ProductsThatCostMoreThan(decimal? price)
-    {
-            if (!price.HasValue)
-            {
-                return BadRequest("You must pass a product price in the query string,for example, / Home / ProductsThatCostMoreThan ? price = 50");
-            }
-            IEnumerable<Product> model = db.Products
-            .Include(p => p.Category)
-            .Include(p => p.Supplier)
-            .Where(p => p.UnitPrice > price);
-            if (!model.Any())
-            {
-                return NotFound($"No products cost more than {price:C}.");
-            }
-            ViewData["MaxPrice"] = price.Value.ToString("C");
-            return View(model); // pass model to view
-    }
+	public IActionResult ProductsThatCostMoreThan(decimal? price)
+	{
+		if (!price.HasValue)
+		{
+			return BadRequest("You must pass a product price in the query string,for example, / Home / ProductsThatCostMoreThan ? price = 50");
+		}
+		IEnumerable<Product> model = db.Products
+		.Include(p => p.Category)
+		.Include(p => p.Supplier)
+		.Where(p => p.UnitPrice > price);
+		if (!model.Any())
+		{
+			return NotFound($"No products cost more than {price:C}.");
+		}
+		ViewData["MaxPrice"] = price.Value.ToString("C");
+		return View(model); // pass model to view
+	}
+
+	public async Task<IActionResult> CategoryDetail(int? id)
+	{
+		if (id == null)
+		{
+			return BadRequest("No Id provided.");
+		}
+
+		Category? category = await db.Categories.SingleOrDefaultAsync(c => c.CategoryId == id);
+
+		if (category == null)
+		{
+			return BadRequest($"Category with id={id} not found");
+		}
+		else
+		{
+			return View(category);
+		}
+	}
 }
