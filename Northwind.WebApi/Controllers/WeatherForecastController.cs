@@ -19,7 +19,7 @@ namespace Northwind.WebApi.Controllers
         }
 
         // GET /weatherforecast
-        [HttpGet(Name = "GetWeatherForecast")]
+        [HttpGet(Name = "GetWeatherForecastFiveDays")]
         public IEnumerable<WeatherForecast> Get()
         {
             return Get(days: 5); //5 days forecast
