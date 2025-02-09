@@ -1,6 +1,9 @@
-@Northwind.WebApi_HostAddress = http://localhost:5142
+@Northwind.WebApi_HostAddress = https://localhost:5001
 
-GET {{Northwind.WebApi_HostAddress}}/weatherforecast/
+GET {{Northwind.WebApi_HostAddress}}/api/customers/
 Accept: application/json
 
 ###
+
+GET {{Northwind.WebApi_HostAddress}}/api/customers/?country=Germany
+Accept: application/json
