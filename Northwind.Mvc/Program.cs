@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Northwind.Mvc.Data;
 using Packt.Shared;
+using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,17 @@ builder.Services.AddOutputCache(options =>
 	options.AddPolicy("views", p => p.SetVaryByQuery("alertstyle")); //named policy, alertstyle will be the only query string parameter that will make the cache vary for this url,
 																	 //so a new cache is made if this parameter change, but other parameters wont make a new cache.
 });
+
+//Enabling HttpClientFactory to acces our API
+builder.Services.AddHttpClient(name: "Northwind.WebApi",
+configureClient: options =>
+{
+    options.BaseAddress = new Uri("https://localhost:5002/");
+    options.DefaultRequestHeaders.Accept.Add(
+    new MediaTypeWithQualityHeaderValue(
+    mediaType: "application/json", quality: 1.0));
+});
+
 
 var app = builder.Build();
 

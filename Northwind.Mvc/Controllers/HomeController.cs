@@ -7,10 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Northwind.Mvc.Controllers;
 
-public class HomeController(ILogger<HomeController> logger, NorthwindContext injectedContext) : Controller
+public class HomeController(ILogger<HomeController> logger, NorthwindContext injectedContext, IHttpClientFactory httpClientFactory) : Controller
 {
 	private readonly ILogger<HomeController> _logger = logger;
 	private readonly NorthwindContext db = injectedContext;
+	private readonly IHttpClientFactory clientFactory = httpClientFactory;
 
 	//this will store the HTTP Response in cache for 10 seconds
 	//this dont work with antiforgery tokens, so it wont work if logged in
@@ -120,4 +121,29 @@ public class HomeController(ILogger<HomeController> logger, NorthwindContext inj
 			return View(category);
 		}
 	}
+
+	//calling api as client:
+    public async Task<IActionResult> Customers(string country)
+    {
+        string uri;
+        if (string.IsNullOrEmpty(country))
+        {
+            ViewData["Title"] = "All Customers Worldwide";
+            uri = "api/customers";
+        }
+        else
+        {
+            ViewData["Title"] = $"Customers in {country}";
+            uri = $"api/customers/?country={country}";
+        }
+
+		HttpClient client = clientFactory.CreateClient(
+		name: "Northwind.WebApi");
+		HttpRequestMessage request = new(
+		method: HttpMethod.Get, requestUri: uri);
+		HttpResponseMessage response = await client.SendAsync(request);
+		IEnumerable<Customer>? model = await response.Content
+		.ReadFromJsonAsync<IEnumerable<Customer>>();
+        return View(model);
+    }
 }
